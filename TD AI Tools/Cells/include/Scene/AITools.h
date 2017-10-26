@@ -14,7 +14,12 @@ class AITools
 	GameManager*	m_pGM;
 
 	// Selection
+	Vector2f positionOnClic;
+	bool mouseButtonWasPressedLastFrame = false;
 
+	FloatRect* selectionRect;
+	RectangleShape* selectionRectShape;
+	Color* blankColor;
 	// Command
 
 	// Diagnostics
