@@ -19,10 +19,15 @@ class AITools
 
 	FloatRect* selectionRect;
 	RectangleShape* selectionRectShape;
-	Color* blankColor;
+	Color* blankColor = new Color();
+	Color* magenta = new Color();
+	int fpsNeedRefresh = 0;
+
 	// Command
 
 	// Diagnostics
+	float fps;
+	double timeBeforeFPSPrint;
 
 public:
 	AITools();

@@ -20,8 +20,8 @@ bool AITools::onInit()
 	m_pGM = GameManager::getSingleton();
 
 	// Selection
-	blankColor = new Color();
 	blankColor->setValues(0, 0, 0, 0);
+	magenta->setValues(255, 0, 255, 255);
 
 	selectionRectShape = new RectangleShape();
 	selectionRectShape->setSize(0.0f, 0.0f);
@@ -65,9 +65,10 @@ bool AITools::onUpdate()
 		selectionRectShape->setSize(selectionRect->m_fW, selectionRect->m_fH);
 	}
 
+	fpsNeedRefresh++;
 	// Command
 	//m_rCommandWindow.contains(vMousePosition)
-	cout << m_pGM->getSelectedEntities()->size() << endl;
+	//cout << m_pGM->getSelectedEntities()->size() << endl;
 
 	return true;
 }
@@ -81,7 +82,49 @@ bool AITools::onDraw()
 	// Commands
 
 	// Diagnostics
-	// Agent* pAgent = pEntity->getComponent<Agent>();
+	// TODO: remove this shit
+	if (fpsNeedRefresh > 100)
+	{
+		fps = 1 / TimeManager::getSingleton()->getFrameTime().asSeconds();
+		fpsNeedRefresh = 0;
+	}
+
+	Text fpsText;
+	fpsText.setCharacterSize(20);
+	fpsText.setFont(m_pGM->getFont("arial.ttf"));
+	fpsText.setPosition(900.0f, 10.0f);
+	fpsText.setString(to_string((int)fps) + " fps");
+	fpsText.setColor(magenta);
+	fpsText.draw();
+	
+
+	ListEntity* entities = m_pGM->getSelectedEntities();
+	for (std::list<Entity*>::iterator it = entities->begin(); it != entities->end(); it++)
+	{
+		Text unitName;
+		unitName.setCharacterSize(20);
+		unitName.setFont(m_pGM->getFont("arial.ttf"));
+		unitName.setPosition((*it)->getPosition().getX(), (*it)->getPosition().getY() - 30.0f);
+		unitName.setString((*it)->getName());
+		unitName.setColor(magenta);
+		unitName.draw();
+
+		Agent* pAgent = (*it)->getComponent<Agent>();
+		if (pAgent != nullptr)
+		{
+			Text unitStats;
+			unitStats.setCharacterSize(18);
+			unitStats.setFont(m_pGM->getFont("arial.ttf"));
+			unitStats.setPosition((*it)->getPosition().getX(), (*it)->getPosition().getY() - 10.0f);
+			string textString = "Dexterity:" + to_string(pAgent->getDexterity())
+				+ " Health:" + to_string(pAgent->getHealth())
+				+ " Strength:" + to_string(pAgent->getStrength())
+				+ " Int:" + to_string(pAgent->getIntelligence());
+			unitStats.setString(textString);
+			unitStats.setColor(magenta);
+			unitStats.draw();
+		}
+	}
 
 	return true;
 }
