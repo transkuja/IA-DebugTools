@@ -18,7 +18,7 @@ class AITools
 	bool mouseButtonWasPressedLastFrame = false;
 
 	FloatRect* selectionRect;
-	RectangleShape* selectionRectShape;
+	RectangleShape* selectionRectShape = new RectangleShape();
 	Color* blankColor = new Color();
 	Color* magenta = new Color();
 	Color* vertCacaDOie = new Color();
@@ -30,11 +30,12 @@ class AITools
 	float gridUnitSize = 32.0f;
 	string commands[10];
 	FloatRect* m_rCommandWindow;
-	Text* commandText;
+	Text* commandText = new Text();
 
 	// Diagnostics
-	float fps;
 	double timeBeforeFPSPrint;
+	RectangleShape* gridRectangle = new RectangleShape();
+	Text* fpsText = new Text();
 
 public:
 	AITools();

@@ -12,7 +12,16 @@ AITools::AITools()
 
 AITools::~AITools()
 {
-
+	delete selectionRect;
+	delete selectionRectShape;
+	delete blankColor;
+	delete magenta;
+	delete vertCacaDOie;
+	delete fuschia;
+	delete m_rCommandWindow;
+	delete commandText;
+	delete gridRectangle;
+	delete fpsText;
 }
 	
 bool AITools::onInit()
@@ -25,25 +34,24 @@ bool AITools::onInit()
 	vertCacaDOie->setValues(121, 137, 51, 255);
 	fuschia->setValues(219, 0, 115, 255);
 
-	selectionRectShape = new RectangleShape();
 	selectionRectShape->setSize(0.0f, 0.0f);
-
 	selectionRectShape->setOutlineThickness(2.0f);
 	selectionRectShape->setColor(blankColor);
 	selectionRectShape->setOutlineColor(fuschia);
 
 	// Commands
+	m_rCommandWindow = new FloatRect(m_pGM->getWindowRect().getWidth() + 256.0f, m_pGM->getWindowRect().getHeight() + 256.0f, 5 * 46.0f, 2 * 38.0f);
+
 	commandSprite = m_pGM->getSprite("Commands");
 	commandSprite->setTexture(m_pGM->getTexture("debug/Commands.png"));
 	commandSprite->setPosition(m_pGM->getWindowRect().getWidth() + 256.0f, m_pGM->getWindowRect().getHeight() + 256.0f);
-	commandText = new Text();
+
 	commandText->setFont(m_pGM->getFont("arial.ttf"));
 	commandText->setPosition(900, 120);
 	commandText->setString("Last command: None");
 	commandText->setCharacterSize(15.0f);
 	commandText->setColor(magenta);
 
-	// Diagnostics
 	commands[0] = "Reset";
 	commands[1] = "Kill";
 	commands[2] = "Stop";
@@ -54,8 +62,18 @@ bool AITools::onInit()
 	commands[7] = "Harvest";
 	commands[8] = "Suicide";
 	commands[9] = "Boost";
-	//"46x38"
-	m_rCommandWindow = new FloatRect(m_pGM->getWindowRect().getWidth() + 256.0f, m_pGM->getWindowRect().getHeight() + 256.0f, 5*46.0f, 2*38.0f);
+
+	// Diagnostics
+	gridRectangle->setSize(gridUnitSize, gridUnitSize);
+	gridRectangle->setOutlineThickness(.5f);
+	gridRectangle->setColor(blankColor);
+	gridRectangle->setOutlineColor(magenta);
+
+	fpsText->setCharacterSize(20);
+	fpsText->setFont(m_pGM->getFont("arial.ttf"));
+	fpsText->setPosition(900.0f, 10.0f);
+	fpsText->setString(" fps");
+	fpsText->setColor(magenta);
 
 	return true;
 }
@@ -93,12 +111,8 @@ bool AITools::onUpdate()
 	if (m_pGM->isMouseButtonPressed(Button::MouseRight))
 	{
 		Vector2f mousePos = Vector2f(m_pGM->getMousePosition().getX() - m_rCommandWindow->m_fX, m_pGM->getMousePosition().getY() - m_rCommandWindow->m_fY);
-
 		if (m_rCommandWindow->contains(m_pGM->getMousePosition()))
-		{
-			cout << (int)(mousePos.getX() / 46.0f) + ((int)(mousePos.getY() / 38.0f) * 5) << endl;
-			commandText->setString("Last command:" + commands[(int)(mousePos.getX() / 46.0f) + ((int)(mousePos.getY() / 38.0f) * 5)]);
-		}
+			commandText->setString("Last command: " + commands[(int)(mousePos.getX() / 46.0f) + ((int)(mousePos.getY() / 38.0f) * 5)]);
 	}
 
 	return true;
@@ -106,22 +120,24 @@ bool AITools::onUpdate()
 
 bool AITools::onDraw()
 {
+	// Draw grid
+	for (int i = 0; i < 28; i++)
+	{
+		for (int j = 0; j < 28; j++)
+		{
+			gridRectangle->setPosition(j * gridUnitSize, i * gridUnitSize);
+			gridRectangle->draw();
+		}
+	}
+
+
 	// Selection
 	if (m_pGM->isMouseButtonPressed(Button::MouseLeft))
 		selectionRectShape->draw();
 
-	// Commands
-
 	// Diagnostics
-	fps = 1 / TimeManager::getSingleton()->getFrameTime().asSeconds();
-
-	Text fpsText;
-	fpsText.setCharacterSize(20);
-	fpsText.setFont(m_pGM->getFont("arial.ttf"));
-	fpsText.setPosition(900.0f, 10.0f);
-	fpsText.setString(to_string((int)fps) + " fps");
-	fpsText.setColor(magenta);
-	fpsText.draw();
+	fpsText->setString(to_string((int)(1 / TimeManager::getSingleton()->getFrameTime().asSeconds())) + " fps");
+	fpsText->draw();
 	
 
 	ListEntity* entitties = m_pGM->getSelectedEntities();
@@ -152,22 +168,7 @@ bool AITools::onDraw()
 		}
 	}
 
-	// Draw grid
-	RectangleShape* gridRectangle = new RectangleShape();
-	gridRectangle->setSize(gridUnitSize, gridUnitSize);
-	gridRectangle->setOutlineThickness(.5f);
-	gridRectangle->setColor(blankColor);
-	gridRectangle->setOutlineColor(magenta);
-
-	for (int i = 0; i < 28; i++)
-	{
-		for (int j = 0; j < 28; j++)
-		{
-			gridRectangle->setPosition(j * gridUnitSize, i * gridUnitSize);
-			gridRectangle->draw();
-		}
-	}
-
+	// Commands
 	commandSprite->draw();
 	commandText->draw();
 	return true;
