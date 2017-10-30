@@ -98,8 +98,8 @@ bool AITools::onDraw()
 	fpsText.draw();
 	
 
-	ListEntity* entities = m_pGM->getSelectedEntities();
-	for (std::list<Entity*>::iterator it = entities->begin(); it != entities->end(); it++)
+	ListEntity* entitties = m_pGM->getSelectedEntities();
+	for (std::list<Entity*>::iterator it = entitties->begin(); it != entitties->end(); it++)
 	{
 		Text unitName;
 		unitName.setCharacterSize(20);
