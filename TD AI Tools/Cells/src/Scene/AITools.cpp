@@ -36,8 +36,26 @@ bool AITools::onInit()
 	commandSprite = m_pGM->getSprite("Commands");
 	commandSprite->setTexture(m_pGM->getTexture("debug/Commands.png"));
 	commandSprite->setPosition(m_pGM->getWindowRect().getWidth() + 256.0f, m_pGM->getWindowRect().getHeight() + 256.0f);
+	commandText = new Text();
+	commandText->setFont(m_pGM->getFont("arial.ttf"));
+	commandText->setPosition(900, 120);
+	commandText->setString("Last command: None");
+	commandText->setCharacterSize(15.0f);
+	commandText->setColor(magenta);
 
 	// Diagnostics
+	commands[0] = "Reset";
+	commands[1] = "Kill";
+	commands[2] = "Stop";
+	commands[3] = "GoToHQ";
+	commands[4] = "GoTo (bad practice)";
+	commands[5] = "Build";
+	commands[6] = "Mine";
+	commands[7] = "Harvest";
+	commands[8] = "Suicide";
+	commands[9] = "Boost";
+	//"46x38"
+	m_rCommandWindow = new FloatRect(m_pGM->getWindowRect().getWidth() + 256.0f, m_pGM->getWindowRect().getHeight() + 256.0f, 5*46.0f, 2*38.0f);
 
 	return true;
 }
@@ -72,8 +90,16 @@ bool AITools::onUpdate()
 	}
 
 	// Command
-	//m_rCommandWindow.contains(vMousePosition)
-	//cout << m_pGM->getSelectedEntities()->size() << endl;
+	if (m_pGM->isMouseButtonPressed(Button::MouseRight))
+	{
+		Vector2f mousePos = Vector2f(m_pGM->getMousePosition().getX() - m_rCommandWindow->m_fX, m_pGM->getMousePosition().getY() - m_rCommandWindow->m_fY);
+
+		if (m_rCommandWindow->contains(m_pGM->getMousePosition()))
+		{
+			cout << (int)(mousePos.getX() / 46.0f) + ((int)(mousePos.getY() / 38.0f) * 5) << endl;
+			commandText->setString("Last command:" + commands[(int)(mousePos.getX() / 46.0f) + ((int)(mousePos.getY() / 38.0f) * 5)]);
+		}
+	}
 
 	return true;
 }
@@ -143,6 +169,7 @@ bool AITools::onDraw()
 	}
 
 	commandSprite->draw();
+	commandText->draw();
 	return true;
 }
 

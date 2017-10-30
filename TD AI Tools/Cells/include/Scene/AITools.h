@@ -28,6 +28,9 @@ class AITools
 	Sprite* commandSprite;
 	float commandSpriteSize = 256.0f;
 	float gridUnitSize = 32.0f;
+	string commands[10];
+	FloatRect* m_rCommandWindow;
+	Text* commandText;
 
 	// Diagnostics
 	float fps;
