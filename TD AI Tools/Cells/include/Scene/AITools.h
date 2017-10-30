@@ -21,9 +21,13 @@ class AITools
 	RectangleShape* selectionRectShape;
 	Color* blankColor = new Color();
 	Color* magenta = new Color();
-	int fpsNeedRefresh = 0;
+	Color* vertCacaDOie = new Color();
+	Color* fuschia = new Color();
 
 	// Command
+	Sprite* commandSprite;
+	float commandSpriteSize = 256.0f;
+	float gridUnitSize = 32.0f;
 
 	// Diagnostics
 	float fps;

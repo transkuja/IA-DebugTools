@@ -22,13 +22,20 @@ bool AITools::onInit()
 	// Selection
 	blankColor->setValues(0, 0, 0, 0);
 	magenta->setValues(255, 0, 255, 255);
+	vertCacaDOie->setValues(121, 137, 51, 255);
+	fuschia->setValues(219, 0, 115, 255);
 
 	selectionRectShape = new RectangleShape();
 	selectionRectShape->setSize(0.0f, 0.0f);
 
 	selectionRectShape->setOutlineThickness(2.0f);
 	selectionRectShape->setColor(blankColor);
+	selectionRectShape->setOutlineColor(fuschia);
+
 	// Commands
+	commandSprite = m_pGM->getSprite("Commands");
+	commandSprite->setTexture(m_pGM->getTexture("debug/Commands.png"));
+	commandSprite->setPosition(m_pGM->getWindowRect().getWidth() + 256.0f, m_pGM->getWindowRect().getHeight() + 256.0f);
 
 	// Diagnostics
 
@@ -56,7 +63,6 @@ bool AITools::onUpdate()
 	// Show selection rect
 	if (mouseButtonPressed)
 	{
-		// TODO: abs
 		selectionRect->m_fH = m_pGM->getMousePosition().getY() - positionOnClic.getY();
 		selectionRect->m_fW = m_pGM->getMousePosition().getX() - positionOnClic.getX();
 		selectionRect->m_fX = positionOnClic.getX();
@@ -65,7 +71,6 @@ bool AITools::onUpdate()
 		selectionRectShape->setSize(selectionRect->m_fW, selectionRect->m_fH);
 	}
 
-	fpsNeedRefresh++;
 	// Command
 	//m_rCommandWindow.contains(vMousePosition)
 	//cout << m_pGM->getSelectedEntities()->size() << endl;
@@ -82,12 +87,7 @@ bool AITools::onDraw()
 	// Commands
 
 	// Diagnostics
-	// TODO: remove this shit
-	if (fpsNeedRefresh > 100)
-	{
-		fps = 1 / TimeManager::getSingleton()->getFrameTime().asSeconds();
-		fpsNeedRefresh = 0;
-	}
+	fps = 1 / TimeManager::getSingleton()->getFrameTime().asSeconds();
 
 	Text fpsText;
 	fpsText.setCharacterSize(20);
@@ -104,9 +104,9 @@ bool AITools::onDraw()
 		Text unitName;
 		unitName.setCharacterSize(20);
 		unitName.setFont(m_pGM->getFont("arial.ttf"));
-		unitName.setPosition((*it)->getPosition().getX(), (*it)->getPosition().getY() - 30.0f);
+		unitName.setPosition((*it)->getPosition().getX(), (*it)->getPosition().getY() - 30.0f);	
 		unitName.setString((*it)->getName());
-		unitName.setColor(magenta);
+		unitName.setColor(vertCacaDOie);
 		unitName.draw();
 
 		Agent* pAgent = (*it)->getComponent<Agent>();
@@ -121,11 +121,28 @@ bool AITools::onDraw()
 				+ " Strength:" + to_string(pAgent->getStrength())
 				+ " Int:" + to_string(pAgent->getIntelligence());
 			unitStats.setString(textString);
-			unitStats.setColor(magenta);
+			unitStats.setColor(vertCacaDOie);
 			unitStats.draw();
 		}
 	}
 
+	// Draw grid
+	RectangleShape* gridRectangle = new RectangleShape();
+	gridRectangle->setSize(gridUnitSize, gridUnitSize);
+	gridRectangle->setOutlineThickness(.5f);
+	gridRectangle->setColor(blankColor);
+	gridRectangle->setOutlineColor(magenta);
+
+	for (int i = 0; i < 28; i++)
+	{
+		for (int j = 0; j < 28; j++)
+		{
+			gridRectangle->setPosition(j * gridUnitSize, i * gridUnitSize);
+			gridRectangle->draw();
+		}
+	}
+
+	commandSprite->draw();
 	return true;
 }
 
